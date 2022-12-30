@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
 import { useForm } from "react-hook-form";
 import { ReactComponent as Image } from "../../assets/pic.svg";
+import { ReactComponent as Background } from "../../assets/pic2.svg";
 
 export default function Login() {
   const [userName, setUserName] = useState("");
@@ -66,13 +67,14 @@ export default function Login() {
   return (
     <div>
       {isLogin ? (
-        <div className="flex flex-col gap-3">
-          <p>
+        <div className="flex flex-col gap-3 rounded-lg mt-6 shadow-lg overflow-hidden bg-white w-[830px] h-[545px] relative">
+          <Background className="absolute" />
+          <p className="absolute top-10 right-[50%] mr-[-125.225px] text-white text-2xl">
             Welcome <strong>{userName}</strong>
           </p>
           <button
             onClick={logOut}
-            className="bg-red-500 p-2 text-white rounded-md"
+            className="bg-[#3F279F] py-2 rounded-md text-white cursor-pointer hover:bg-[#e63946] duration-200 absolute w-[150px] bottom-10 right-[50%] mr-[-75px]"
           >
             Log out
           </button>
@@ -116,7 +118,7 @@ export default function Login() {
 
               <input
                 type="submit"
-                className="bg-[#9F59F5] py-2 rounded-md text-white"
+                className="bg-[#9F59F5] py-2 rounded-md text-white cursor-pointer hover:bg-[#7651D5] duration-200"
                 value="Log in"
               />
             </form>
