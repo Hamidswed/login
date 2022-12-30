@@ -1,5 +1,8 @@
 .App {
   text-align: center;
 }
-
-
+body{
+  background-image: url("./assets/back.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
