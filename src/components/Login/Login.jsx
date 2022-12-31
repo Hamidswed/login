@@ -3,18 +3,22 @@ import { useCookies } from "react-cookie";
 import { useForm } from "react-hook-form";
 import { ReactComponent as Image } from "../../assets/pic.svg";
 import { ReactComponent as Background } from "../../assets/pic2.svg";
+import Logout from "../Logout/Logout";
 
 export default function Login() {
-  const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(false);
   const [isUser, setIsUser] = useState(true);
   const [cookies, setCookie, removeCookie] = useCookies(["user"]);
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    email: "",
+    password: "",
+  });
+  const { email, password } = watch();
 
   useEffect(() => {
     if (cookies.token) {
@@ -24,22 +28,18 @@ export default function Login() {
     }
   }, [cookies.token]);
 
-  const userNameHandler = (e) => {
-    setUserName(e.target.value);
-  };
-  const passwordHandler = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handle = (token) => {
+  const handle = (token, name) => {
     setCookie("token", token);
+    setCookie("name", name);
   };
   const logOut = () => {
     removeCookie("token");
+    removeCookie("name");
     setIsLogin(false);
     setIsUser(true);
   };
   const submitBtn = () => {
+
     fetch("https://test.zyax.se/access/", {
       method: "POST",
       headers: {
@@ -47,14 +47,14 @@ export default function Login() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: userName,
+        email: email,
         password: password,
       }),
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.accessToken?.length > 0) {
-          handle(data.accessToken);
+          handle(data.accessToken, email);
           setIsLogin(true);
         } else if (data.error) {
           console.log(data.error);
@@ -68,16 +68,7 @@ export default function Login() {
     <div>
       {isLogin ? (
         <div className="flex flex-col gap-3 rounded-lg mt-6 shadow-lg overflow-hidden bg-white w-[830px] h-[545px] relative">
-          <Background className="absolute" />
-          <p className="absolute top-10 right-[50%] mr-[-125.225px] text-white text-2xl">
-            Welcome <strong>{userName}</strong>
-          </p>
-          <button
-            onClick={logOut}
-            className="bg-[#3F279F] py-2 rounded-md text-white cursor-pointer hover:bg-[#e63946] duration-200 absolute w-[150px] bottom-10 right-[50%] mr-[-75px]"
-          >
-            Log out
-          </button>
+          <Logout logOut={logOut}/>
         </div>
       ) : (
         <div className="flex rounded-lg mt-6 shadow-lg overflow-hidden bg-white">
@@ -93,23 +84,22 @@ export default function Login() {
               className="flex flex-col gap-5 w-[250px]"
             >
               <input
-                {...register("userName", {
-                  required: true,
-                  maxLength: 20,
-                })}
-                type="text"
+                {...register("email", { required: true })}
+                type="email"
+                name="email"
                 placeholder="Email"
-                onChange={userNameHandler}
                 className="rounded-md"
               />
-              {errors.userName && (
-                <span className="text-red-500">Email is required!</span>
+              {errors.email && (
+                <span className="text-red-500" title="error">
+                  Email is required!
+                </span>
               )}
               <input
                 {...register("password", { required: true })}
                 type="password"
+                name="password"
                 placeholder="Password"
-                onChange={passwordHandler}
                 className="rounded-md"
               />
               {errors.password && (
